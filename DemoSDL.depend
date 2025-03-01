@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1739591882 source:d:\game sdl2\demosdl\main.cpp
+	<SDL.h>
+	<vector>
+	<algorithm>
+
