@@ -54,7 +54,7 @@ public:
     Obstacle() {
         x = SCREEN_WIDTH;
         y = SCREEN_HEIGHT - OBSTACLE_HEIGHT;
-        speed = 6;
+        speed = 7;
     }
 
     void update() {
