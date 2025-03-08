@@ -1,6 +1,7 @@
-#include <SDL.h>
-#include <iostream>
+#include <SDL.h>          // Thư viện SDL
+#include <iostream>       // Thư viện nhập/xuất C++
 
+// Định nghĩa hằng số
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 400;
 const int DINO_WIDTH = 40;
@@ -8,24 +9,27 @@ const int DINO_HEIGHT = 40;
 const int OBSTACLE_WIDTH = 20;
 const int OBSTACLE_HEIGHT = 40;
 
-// Lớp Dinosaur
+// Class Dino
 class Dino {
 public:
     int x, y;
     int velocity;
     bool isJumping;
+    int jumpCount;
 
     Dino() {
         x = 50;
         y = SCREEN_HEIGHT - DINO_HEIGHT;
         velocity = 0;
         isJumping = false;
+        jumpCount = 0;
     }
 
     void jump() {
-        if (!isJumping) {
+        if (jumpCount < 2) {
             velocity = -15;
             isJumping = true;
+            jumpCount++;
         }
     }
 
@@ -37,6 +41,7 @@ public:
             y = SCREEN_HEIGHT - DINO_HEIGHT;
             velocity = 0;
             isJumping = false;
+            jumpCount = 0;
         }
     }
 
@@ -45,7 +50,7 @@ public:
     }
 };
 
-// Lớp Obstacle
+// Class Obstacle
 class Obstacle {
 public:
     int x, y;
@@ -70,6 +75,7 @@ public:
     }
 };
 
+// Hàm main
 int main(int argc, char* argv[]) {
     // Khởi tạo SDL
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
