@@ -4,7 +4,7 @@
 #include <string>
 
 const int SCREEN_WIDTH = 800;
-const int SCREEN_HEIGHT = 400;
+const int SCREEN_HEIGHT = 450;
 const int DINO_WIDTH = 80;
 const int DINO_HEIGHT = 80;
 const int OBSTACLE_WIDTH = 40;
@@ -94,7 +94,6 @@ public:
     bool currentRunFrame;
     const Uint32 frameDelay = 200;
 
-    // Constructor
     Dino(SDL_Texture* tex1, SDL_Texture* tex2, SDL_Texture* jumpTex) {
         x = 50;
         y = SCREEN_HEIGHT - DINO_HEIGHT;
@@ -108,11 +107,9 @@ public:
         currentRunFrame = false;
     }
 
-    // Disable copy constructor and assignment operator
     Dino(const Dino&) = delete;
     Dino& operator=(const Dino&) = delete;
 
-    // Reset method to reinitialize the Dino object
     void reset(SDL_Texture* tex1, SDL_Texture* tex2, SDL_Texture* jumpTex) {
         x = 50;
         y = SCREEN_HEIGHT - DINO_HEIGHT;
@@ -215,6 +212,19 @@ int main(int argc, char* argv[]) {
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     if (!renderer) return 1;
 
+    // Load background texture
+    SDL_Surface* backgroundSurface = IMG_Load("background.png");
+    if (!backgroundSurface) {
+        std::cout << "Failed to load background.png! IMG_Error: " << IMG_GetError() << std::endl;
+        return 1;
+    }
+    SDL_Texture* backgroundTexture = SDL_CreateTextureFromSurface(renderer, backgroundSurface);
+    SDL_FreeSurface(backgroundSurface);
+    if (!backgroundTexture) {
+        std::cout << "Failed to create background texture! SDL_Error: " << SDL_GetError() << std::endl;
+        return 1;
+    }
+
     // Load game over texture
     SDL_Surface* gameOverSurface = IMG_Load("gameover.jpg");
     if (!gameOverSurface) return 1;
@@ -272,7 +282,6 @@ int main(int argc, char* argv[]) {
                 if (!gameOver) {
                     dino.jump();
                 } else {
-                    // Reset the dino object instead of reassigning
                     dino.reset(runTexture1, runTexture2, jumpTexture);
                     obstacle = Obstacle(obstacleTexture);
                     gameOver = false;
@@ -311,8 +320,13 @@ int main(int argc, char* argv[]) {
             }
         }
 
+        // Clear the screen
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         SDL_RenderClear(renderer);
+
+        // Draw the background
+        SDL_Rect backgroundRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+        SDL_RenderCopy(renderer, backgroundTexture, NULL, &backgroundRect);
 
         if (!gameOver) {
             SDL_Rect dinoRect = dino.getRect();
@@ -335,6 +349,8 @@ int main(int argc, char* argv[]) {
         SDL_Delay(16);
     }
 
+    // Cleanup
+    SDL_DestroyTexture(backgroundTexture);
     SDL_DestroyTexture(obstacleTexture);
     SDL_DestroyTexture(gameOverTexture);
     SDL_DestroyTexture(runTexture1);
