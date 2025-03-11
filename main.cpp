@@ -10,6 +10,12 @@ const int DINO_HEIGHT = 80;
 const int OBSTACLE_WIDTH = 40;
 const int OBSTACLE_HEIGHT = 80;
 
+enum GameState {
+    START,
+    PLAYING,
+    GAME_OVER
+};
+
 void drawNumber(SDL_Renderer* renderer, int number, int x, int y, int size) {
     std::string numStr = std::to_string(number);
     int offset = 0;
@@ -220,10 +226,17 @@ int main(int argc, char* argv[]) {
     }
     SDL_Texture* backgroundTexture = SDL_CreateTextureFromSurface(renderer, backgroundSurface);
     SDL_FreeSurface(backgroundSurface);
-    if (!backgroundTexture) {
-        std::cout << "Failed to create background texture! SDL_Error: " << SDL_GetError() << std::endl;
+    if (!backgroundTexture) return 1;
+
+    // Load game start texture
+    SDL_Surface* gameStartSurface = IMG_Load("gamestart.png");
+    if (!gameStartSurface) {
+        std::cout << "Failed to load gamestart.png! IMG_Error: " << IMG_GetError() << std::endl;
         return 1;
     }
+    SDL_Texture* gameStartTexture = SDL_CreateTextureFromSurface(renderer, gameStartSurface);
+    SDL_FreeSurface(gameStartSurface);
+    if (!gameStartTexture) return 1;
 
     // Load game over texture
     SDL_Surface* gameOverSurface = IMG_Load("gameover.jpg");
@@ -262,7 +275,7 @@ int main(int argc, char* argv[]) {
     Dino dino(runTexture1, runTexture2, jumpTexture);
     Obstacle obstacle(obstacleTexture);
     bool quit = false;
-    bool gameOver = false;
+    GameState gameState = START;
     SDL_Event e;
     Uint32 lastObstacleTime = 0;
     const Uint32 obstacleInterval = 1500;
@@ -279,19 +292,21 @@ int main(int argc, char* argv[]) {
                 quit = true;
             }
             if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_SPACE) {
-                if (!gameOver) {
-                    dino.jump();
-                } else {
+                if (gameState == START) {
+                    gameState = PLAYING;
+                    score = 0;
+                    speedMultiplier = 1.0f;
                     dino.reset(runTexture1, runTexture2, jumpTexture);
                     obstacle = Obstacle(obstacleTexture);
-                    gameOver = false;
-                    speedMultiplier = 1.0f;
-                    score = 0;
+                } else if (gameState == PLAYING) {
+                    dino.jump();
+                } else if (gameState == GAME_OVER) {
+                    gameState = START;
                 }
             }
         }
 
-        if (!gameOver) {
+        if (gameState == PLAYING) {
             speedMultiplier += speedIncreaseRate;
             if (speedMultiplier > maxSpeedMultiplier) {
                 speedMultiplier = maxSpeedMultiplier;
@@ -316,19 +331,23 @@ int main(int argc, char* argv[]) {
             SDL_Rect dinoRect = dino.getRect();
             SDL_Rect obstacleRect = obstacle.getRect();
             if (SDL_HasIntersection(&dinoRect, &obstacleRect)) {
-                gameOver = true;
+                gameState = GAME_OVER;
             }
         }
 
-        // Clear the screen
+        // Clear màn hình
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         SDL_RenderClear(renderer);
 
-        // Draw the background
+        // Vẽ background
         SDL_Rect backgroundRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
         SDL_RenderCopy(renderer, backgroundTexture, NULL, &backgroundRect);
 
-        if (!gameOver) {
+        // Vẽ theo trạng thái
+        if (gameState == START) {
+            SDL_Rect gameStartRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+            SDL_RenderCopy(renderer, gameStartTexture, NULL, &gameStartRect);
+        } else if (gameState == PLAYING) {
             SDL_Rect dinoRect = dino.getRect();
             SDL_RenderCopy(renderer, dino.getCurrentTexture(), NULL, &dinoRect);
 
@@ -337,7 +356,7 @@ int main(int argc, char* argv[]) {
 
             SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
             drawNumber(renderer, score, 10, 10, 20);
-        } else {
+        } else if (gameState == GAME_OVER) {
             SDL_Rect gameOverRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
             SDL_RenderCopy(renderer, gameOverTexture, NULL, &gameOverRect);
 
@@ -351,6 +370,7 @@ int main(int argc, char* argv[]) {
 
     // Cleanup
     SDL_DestroyTexture(backgroundTexture);
+    SDL_DestroyTexture(gameStartTexture);  // Giải phóng texture mới
     SDL_DestroyTexture(obstacleTexture);
     SDL_DestroyTexture(gameOverTexture);
     SDL_DestroyTexture(runTexture1);
