@@ -7,8 +7,8 @@
 
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 450;
-const int DINO_WIDTH = 100;   // Đã sửa từ 80 thành 100
-const int DINO_HEIGHT = 100;  // Đã sửa từ 80 thành 100
+const int DINO_WIDTH = 100;
+const int DINO_HEIGHT = 100;
 const int OBSTACLE_WIDTH = 40;
 const int OBSTACLE_HEIGHT = 80;
 const int FLYING_OBSTACLE_WIDTH = 80;
@@ -106,7 +106,7 @@ public:
 
     Dino(SDL_Texture* tex1, SDL_Texture* tex2, SDL_Texture* jumpTex) {
         x = 50;
-        y = SCREEN_HEIGHT - DINO_HEIGHT; // DINO_HEIGHT giờ là 100
+        y = SCREEN_HEIGHT - DINO_HEIGHT;
         velocity = 0;
         isJumping = false;
         jumpCount = 0;
@@ -122,7 +122,7 @@ public:
 
     void reset(SDL_Texture* tex1, SDL_Texture* tex2, SDL_Texture* jumpTex) {
         x = 50;
-        y = SCREEN_HEIGHT - DINO_HEIGHT; // DINO_HEIGHT giờ là 100
+        y = SCREEN_HEIGHT - DINO_HEIGHT;
         velocity = 0;
         isJumping = false;
         jumpCount = 0;
@@ -146,7 +146,7 @@ public:
         velocity += 1;
 
         if (y >= SCREEN_HEIGHT - DINO_HEIGHT) {
-            y = SCREEN_HEIGHT - DINO_HEIGHT; // DINO_HEIGHT giờ là 100
+            y = SCREEN_HEIGHT - DINO_HEIGHT;
             velocity = 0;
             isJumping = false;
             jumpCount = 0;
@@ -154,11 +154,12 @@ public:
     }
 
     SDL_Rect getRect() {
-        return {x, y, DINO_WIDTH, DINO_HEIGHT}; // 100x100 cho rendering
+        return {x, y, DINO_WIDTH, DINO_HEIGHT}; // 80x80 for rendering
     }
 
     SDL_Rect getCollisionRect() const {
-        return {x, y, DINO_WIDTH, DINO_HEIGHT}; // Bounding box là 100x100
+
+        return {x , y, DINO_WIDTH, DINO_HEIGHT}; // 60x80 for collision
     }
 
     SDL_Texture* getCurrentTexture() {
