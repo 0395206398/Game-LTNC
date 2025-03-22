@@ -13,6 +13,9 @@ const int OBSTACLE_WIDTH = 40;
 const int OBSTACLE_HEIGHT = 80;
 const int FLYING_OBSTACLE_WIDTH = 80;
 const int FLYING_OBSTACLE_HEIGHT = 80;
+const int ITEM_WIDTH = 40;
+const int ITEM_HEIGHT = 40;
+const Uint32 SPEED_EFFECT_DURATION = 5000; // 5 seconds for speed effect
 
 enum GameState {
     START,
@@ -103,6 +106,8 @@ public:
     Uint32 lastFrameTime;
     bool currentRunFrame;
     const Uint32 frameDelay = 200;
+    float speedMultiplier;
+    Uint32 speedEffectEndTime;
 
     Dino(SDL_Texture* tex1, SDL_Texture* tex2, SDL_Texture* jumpTex) {
         x = 50;
@@ -115,6 +120,8 @@ public:
         jumpTexture = jumpTex;
         lastFrameTime = 0;
         currentRunFrame = false;
+        speedMultiplier = 1.0f;
+        speedEffectEndTime = 0;
     }
 
     Dino(const Dino&) = delete;
@@ -131,6 +138,8 @@ public:
         jumpTexture = jumpTex;
         lastFrameTime = 0;
         currentRunFrame = false;
+        speedMultiplier = 1.0f;
+        speedEffectEndTime = 0;
     }
 
     void jump() {
@@ -139,6 +148,11 @@ public:
             isJumping = true;
             jumpCount++;
         }
+    }
+
+    void applySpeedEffect(float multiplier) {
+        speedMultiplier = multiplier;
+        speedEffectEndTime = SDL_GetTicks() + SPEED_EFFECT_DURATION;
     }
 
     void update() {
@@ -151,15 +165,19 @@ public:
             isJumping = false;
             jumpCount = 0;
         }
+
+        if (speedEffectEndTime > 0 && SDL_GetTicks() > speedEffectEndTime) {
+            speedMultiplier = 1.0f;
+            speedEffectEndTime = 0;
+        }
     }
 
     SDL_Rect getRect() {
-        return {x, y, DINO_WIDTH, DINO_HEIGHT}; // 80x80 for rendering
+        return {x, y, DINO_WIDTH, DINO_HEIGHT};
     }
 
     SDL_Rect getCollisionRect() const {
-
-        return {x , y, DINO_WIDTH, DINO_HEIGHT}; // 60x80 for collision
+        return {x, y, DINO_WIDTH, DINO_HEIGHT};
     }
 
     SDL_Texture* getCurrentTexture() {
@@ -206,14 +224,14 @@ public:
 
 class FlyingObstacle {
 public:
-    int x, y;
+    double x, y;
     float speed;
     bool passed;
     SDL_Texture* texture;
 
     FlyingObstacle(SDL_Texture* tex) {
         x = SCREEN_WIDTH;
-        y = SCREEN_HEIGHT / 2;
+        y = SCREEN_HEIGHT / 1.4;
         speed = 7.0f;
         passed = false;
         texture = tex;
@@ -229,6 +247,58 @@ public:
 
     bool isOffScreen() const {
         return x < -FLYING_OBSTACLE_WIDTH;
+    }
+};
+
+class SpeedUpItem {
+public:
+    int x, y;
+    float speed;
+    SDL_Texture* texture;
+
+    SpeedUpItem(SDL_Texture* tex) {
+        x = SCREEN_WIDTH;
+        y = SCREEN_HEIGHT - ITEM_HEIGHT - 20;
+        speed = 7.0f;
+        texture = tex;
+    }
+
+    void update() {
+        x -= static_cast<int>(speed);
+    }
+
+    SDL_Rect getRect() const {
+        return {x, y, ITEM_WIDTH, ITEM_HEIGHT};
+    }
+
+    bool isOffScreen() const {
+        return x < -ITEM_WIDTH;
+    }
+};
+
+class SlowDownItem {
+public:
+    int x, y;
+    float speed;
+    SDL_Texture* texture;
+
+    SlowDownItem(SDL_Texture* tex) {
+        x = SCREEN_WIDTH;
+        y = SCREEN_HEIGHT - ITEM_HEIGHT - 20;
+        speed = 7.0f;
+        texture = tex;
+    }
+
+    void update() {
+        x -= static_cast<int>(speed);
+    }
+
+    SDL_Rect getRect() const {
+        return {x, y, ITEM_WIDTH, ITEM_HEIGHT};
+    }
+
+    bool isOffScreen() const {
+        return x < -ITEM_WIDTH;
     }
 };
 
@@ -294,6 +364,24 @@ int main(int argc, char* argv[]) {
     SDL_FreeSurface(flyingObstacleSurface);
     if (!flyingObstacleTexture) return 1;
 
+    SDL_Surface* speedUpItemSurface = IMG_Load("speedup.png");
+    if (!speedUpItemSurface) {
+        std::cout << "Failed to load speedup.png! IMG_Error: " << IMG_GetError() << std::endl;
+        return 1;
+    }
+    SDL_Texture* speedUpItemTexture = SDL_CreateTextureFromSurface(renderer, speedUpItemSurface);
+    SDL_FreeSurface(speedUpItemSurface);
+    if (!speedUpItemTexture) return 1;
+
+    SDL_Surface* slowDownItemSurface = IMG_Load("slowdown.png");
+    if (!slowDownItemSurface) {
+        std::cout << "Failed to load slowdown.png! IMG_Error: " << IMG_GetError() << std::endl;
+        return 1;
+    }
+    SDL_Texture* slowDownItemTexture = SDL_CreateTextureFromSurface(renderer, slowDownItemSurface);
+    SDL_FreeSurface(slowDownItemSurface);
+    if (!slowDownItemTexture) return 1;
+
     SDL_Surface* runSurface1 = IMG_Load("vegitorun1.png");
     if (!runSurface1) return 1;
     SDL_Texture* runTexture1 = SDL_CreateTextureFromSurface(renderer, runSurface1);
@@ -315,11 +403,15 @@ int main(int argc, char* argv[]) {
     Dino dino(runTexture1, runTexture2, jumpTexture);
     std::vector<Obstacle> obstacles;
     std::vector<FlyingObstacle> flyingObstacles;
+    std::vector<SpeedUpItem> speedUpItems;
+    std::vector<SlowDownItem> slowDownItems;
     bool quit = false;
     GameState gameState = START;
     SDL_Event e;
     Uint32 lastObstacleTime = 0;
+    Uint32 lastItemTime = 0;
     const Uint32 obstacleInterval = 1500;
+    const Uint32 itemInterval = 5000;
     int score = 0;
 
     float baseSpeed = 7.0f;
@@ -340,6 +432,8 @@ int main(int argc, char* argv[]) {
                     dino.reset(runTexture1, runTexture2, jumpTexture);
                     obstacles.clear();
                     flyingObstacles.clear();
+                    speedUpItems.clear();
+                    slowDownItems.clear();
                     obstacles.push_back(Obstacle(obstacleTexture));
                 } else if (gameState == PLAYING) {
                     dino.jump();
@@ -357,13 +451,23 @@ int main(int argc, char* argv[]) {
 
             dino.update();
 
+            float totalSpeedMultiplier = speedMultiplier * dino.speedMultiplier;
+
             for (auto& obstacle : obstacles) {
-                obstacle.speed = baseSpeed * speedMultiplier;
+                obstacle.speed = baseSpeed * totalSpeedMultiplier;
                 obstacle.update();
             }
             for (auto& flyingObstacle : flyingObstacles) {
-                flyingObstacle.speed = baseSpeed * speedMultiplier;
+                flyingObstacle.speed = baseSpeed * totalSpeedMultiplier;
                 flyingObstacle.update();
+            }
+            for (auto& item : speedUpItems) {
+                item.speed = baseSpeed * totalSpeedMultiplier;
+                item.update();
+            }
+            for (auto& item : slowDownItems) {
+                item.speed = baseSpeed * totalSpeedMultiplier;
+                item.update();
             }
 
             for (auto& obstacle : obstacles) {
@@ -391,6 +495,23 @@ int main(int argc, char* argv[]) {
                 }
             }
 
+            // Modified item spawning logic
+            if (currentTime - lastItemTime > itemInterval) {
+                if (score >= 600 && score < 1000) {
+                    // Only spawn speed-up items between 600 and 1000 points
+                    speedUpItems.push_back(SpeedUpItem(speedUpItemTexture));
+                } else if (score >= 1000) {
+                    // After 1000 points, spawn both types of items randomly
+                    if (rand() % 2 == 0) {
+                        speedUpItems.push_back(SpeedUpItem(speedUpItemTexture));
+                    } else {
+                        slowDownItems.push_back(SlowDownItem(slowDownItemTexture));
+                    }
+                }
+                // No items spawn below 600 points
+                lastItemTime = currentTime;
+            }
+
             obstacles.erase(
                 std::remove_if(obstacles.begin(), obstacles.end(),
                     [](const Obstacle& o) { return o.isOffScreen(); }),
@@ -399,6 +520,14 @@ int main(int argc, char* argv[]) {
                 std::remove_if(flyingObstacles.begin(), flyingObstacles.end(),
                     [](const FlyingObstacle& o) { return o.isOffScreen(); }),
                 flyingObstacles.end());
+            speedUpItems.erase(
+                std::remove_if(speedUpItems.begin(), speedUpItems.end(),
+                    [](const SpeedUpItem& i) { return i.isOffScreen(); }),
+                speedUpItems.end());
+            slowDownItems.erase(
+                std::remove_if(slowDownItems.begin(), slowDownItems.end(),
+                    [](const SlowDownItem& i) { return i.isOffScreen(); }),
+                slowDownItems.end());
 
             SDL_Rect dinoCollisionRect = dino.getCollisionRect();
             for (const auto& obstacle : obstacles) {
@@ -411,6 +540,26 @@ int main(int argc, char* argv[]) {
                 SDL_Rect flyingRect = flyingObstacle.getRect();
                 if (SDL_HasIntersection(&dinoCollisionRect, &flyingRect)) {
                     gameState = GAME_OVER;
+                }
+            }
+
+            for (auto it = speedUpItems.begin(); it != speedUpItems.end();) {
+                SDL_Rect itemRect = it->getRect();
+                if (SDL_HasIntersection(&dinoCollisionRect, &itemRect)) {
+                    dino.applySpeedEffect(1.5f);
+                    it = speedUpItems.erase(it);
+                } else {
+                    ++it;
+                }
+            }
+
+            for (auto it = slowDownItems.begin(); it != slowDownItems.end();) {
+                SDL_Rect itemRect = it->getRect();
+                if (SDL_HasIntersection(&dinoCollisionRect, &itemRect)) {
+                    dino.applySpeedEffect(0.5f);
+                    it = slowDownItems.erase(it);
+                } else {
+                    ++it;
                 }
             }
         }
@@ -436,6 +585,14 @@ int main(int argc, char* argv[]) {
                 SDL_Rect flyingRect = flyingObstacle.getRect();
                 SDL_RenderCopy(renderer, flyingObstacleTexture, NULL, &flyingRect);
             }
+            for (const auto& item : speedUpItems) {
+                SDL_Rect itemRect = item.getRect();
+                SDL_RenderCopy(renderer, speedUpItemTexture, NULL, &itemRect);
+            }
+            for (const auto& item : slowDownItems) {
+                SDL_Rect itemRect = item.getRect();
+                SDL_RenderCopy(renderer, slowDownItemTexture, NULL, &itemRect);
+            }
 
             SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
             drawNumber(renderer, score, 10, 10, 20);
@@ -455,6 +612,8 @@ int main(int argc, char* argv[]) {
     SDL_DestroyTexture(gameStartTexture);
     SDL_DestroyTexture(obstacleTexture);
     SDL_DestroyTexture(flyingObstacleTexture);
+    SDL_DestroyTexture(speedUpItemTexture);
+    SDL_DestroyTexture(slowDownItemTexture);
     SDL_DestroyTexture(gameOverTexture);
     SDL_DestroyTexture(runTexture1);
     SDL_DestroyTexture(runTexture2);
