@@ -1,5 +1,6 @@
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_mixer.h>  // Thêm SDL Mixer
 #include <iostream>
 #include <string>
 #include <vector>
@@ -242,7 +243,7 @@ public:
     }
 
     SDL_Rect getRect() const {
-        return {x, y, FLYING_OBSTACLE_WIDTH, FLYING_OBSTACLE_HEIGHT};
+        return {static_cast<int>(x), static_cast<int>(y), FLYING_OBSTACLE_WIDTH, FLYING_OBSTACLE_HEIGHT};
     }
 
     bool isOffScreen() const {
@@ -303,13 +304,22 @@ public:
 };
 
 int main(int argc, char* argv[]) {
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+    // Khởi tạo SDL với audio
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
         std::cout << "SDL could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
+        return 1;
+    }
+
+    // Khởi tạo SDL Mixer
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+        std::cout << "SDL_mixer could not initialize! Mix_Error: " << Mix_GetError() << std::endl;
+        SDL_Quit();
         return 1;
     }
 
     if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
         std::cout << "SDL_image could not initialize! IMG_Error: " << IMG_GetError() << std::endl;
+        Mix_CloseAudio();
         SDL_Quit();
         return 1;
     }
@@ -325,6 +335,7 @@ int main(int argc, char* argv[]) {
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     if (!renderer) return 1;
 
+    // Load textures
     SDL_Surface* backgroundSurface = IMG_Load("background.png");
     if (!backgroundSurface) {
         std::cout << "Failed to load background.png! IMG_Error: " << IMG_GetError() << std::endl;
@@ -400,6 +411,20 @@ int main(int argc, char* argv[]) {
     SDL_FreeSurface(jumpSurface);
     if (!jumpTexture) return 1;
 
+    // Load sound effects
+    Mix_Chunk* jumpSound = Mix_LoadWAV("jump.wav");
+    if (!jumpSound) {
+        std::cout << "Failed to load jump.wav! Mix_Error: " << Mix_GetError() << std::endl;
+        return 1;
+    }
+
+    Mix_Chunk* gameOverSound = Mix_LoadWAV("gameover.wav");
+    if (!gameOverSound) {
+        std::cout << "Failed to load gameover.wav! Mix_Error: " << Mix_GetError() << std::endl;
+        Mix_FreeChunk(jumpSound);
+        return 1;
+    }
+
     Dino dino(runTexture1, runTexture2, jumpTexture);
     std::vector<Obstacle> obstacles;
     std::vector<FlyingObstacle> flyingObstacles;
@@ -413,6 +438,7 @@ int main(int argc, char* argv[]) {
     const Uint32 obstacleInterval = 1500;
     const Uint32 itemInterval = 5000;
     int score = 0;
+    bool gameOverSoundPlayed = false;  // Flag để đảm bảo âm thanh game over chỉ phát một lần
 
     float baseSpeed = 7.0f;
     float speedMultiplier = 1.0f;
@@ -435,10 +461,13 @@ int main(int argc, char* argv[]) {
                     speedUpItems.clear();
                     slowDownItems.clear();
                     obstacles.push_back(Obstacle(obstacleTexture));
+                    gameOverSoundPlayed = false;  // Reset flag khi bắt đầu lại
                 } else if (gameState == PLAYING) {
                     dino.jump();
+                    Mix_PlayChannel(-1, jumpSound, 0);  // Phát âm thanh khi nhảy
                 } else if (gameState == GAME_OVER) {
                     gameState = START;
+                    gameOverSoundPlayed = false;  // Reset flag khi quay lại màn hình start
                 }
             }
         }
@@ -495,20 +524,16 @@ int main(int argc, char* argv[]) {
                 }
             }
 
-            // Modified item spawning logic
             if (currentTime - lastItemTime > itemInterval) {
                 if (score >= 600 && score < 1000) {
-                    // Only spawn speed-up items between 600 and 1000 points
                     speedUpItems.push_back(SpeedUpItem(speedUpItemTexture));
                 } else if (score >= 1000) {
-                    // After 1000 points, spawn both types of items randomly
                     if (rand() % 2 == 0) {
                         speedUpItems.push_back(SpeedUpItem(speedUpItemTexture));
                     } else {
                         slowDownItems.push_back(SlowDownItem(slowDownItemTexture));
                     }
                 }
-                // No items spawn below 600 points
                 lastItemTime = currentTime;
             }
 
@@ -602,12 +627,21 @@ int main(int argc, char* argv[]) {
 
             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
             drawNumber(renderer, score, SCREEN_WIDTH/2 - 20, SCREEN_HEIGHT/2 - 10, 20);
+
+            // Phát âm thanh game over một lần
+            if (!gameOverSoundPlayed) {
+                Mix_PlayChannel(-1, gameOverSound, 0);
+                gameOverSoundPlayed = true;
+            }
         }
 
         SDL_RenderPresent(renderer);
         SDL_Delay(16);
     }
 
+    // Giải phóng tài nguyên
+    Mix_FreeChunk(jumpSound);
+    Mix_FreeChunk(gameOverSound);
     SDL_DestroyTexture(backgroundTexture);
     SDL_DestroyTexture(gameStartTexture);
     SDL_DestroyTexture(obstacleTexture);
@@ -620,6 +654,7 @@ int main(int argc, char* argv[]) {
     SDL_DestroyTexture(jumpTexture);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+    Mix_CloseAudio();  // Đóng SDL Mixer
     IMG_Quit();
     SDL_Quit();
 
