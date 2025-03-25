@@ -32,7 +32,34 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="13.png" />
+		<Unit filename="Constants.h" />
+		<Unit filename="Dino.cpp" />
+		<Unit filename="Dino.h" />
+		<Unit filename="FlyingObstacle.cpp" />
+		<Unit filename="FlyingObstacle.h" />
+		<Unit filename="Obstacle.cpp" />
+		<Unit filename="Obstacle.h" />
+		<Unit filename="ResourceManager.cpp" />
+		<Unit filename="ResourceManager.h" />
+		<Unit filename="SlowDownItem.cpp" />
+		<Unit filename="SlowDownItem.h" />
+		<Unit filename="SpeedUpItem.cpp" />
+		<Unit filename="SpeedUpItem.h" />
+		<Unit filename="Utils.cpp" />
+		<Unit filename="Utils.h" />
+		<Unit filename="background.png" />
+		<Unit filename="flying_obstacle.png" />
+		<Unit filename="gameover.jpg" />
+		<Unit filename="gameover.wav" />
+		<Unit filename="gamestart.png" />
+		<Unit filename="jump.wav" />
 		<Unit filename="main.cpp" />
+		<Unit filename="slowdown.png" />
+		<Unit filename="speedup.png" />
+		<Unit filename="vegitojump.png" />
+		<Unit filename="vegitorun1.png" />
+		<Unit filename="vegitorun2.png" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
 		</Extensions>
