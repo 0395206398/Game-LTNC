@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1742955134 source:d:\game sdl2\demosdl\main.cpp
+1742956573 source:d:\game sdl2\demosdl\main.cpp
 	<SDL.h>
 	<SDL_image.h>
 	<SDL_mixer.h>
@@ -44,7 +44,7 @@
 1742868741 d:\game sdl2\demosdl\utils.h
 	<SDL.h>
 
-1742954073 d:\game sdl2\demosdl\resourcemanager.h
+1742956381 d:\game sdl2\demosdl\resourcemanager.h
 	<SDL.h>
 	<SDL_image.h>
 	<SDL_mixer.h>
@@ -54,7 +54,7 @@
 	"Obstacle.h"
 	"Constants.h"
 
-1742954091 source:d:\game sdl2\demosdl\resourcemanager.cpp
+1742956397 source:d:\game sdl2\demosdl\resourcemanager.cpp
 	"ResourceManager.h"
 
 1742868713 source:d:\game sdl2\demosdl\slowdownitem.cpp
