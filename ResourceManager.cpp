@@ -94,6 +94,30 @@ ResourceManager::ResourceManager(SDL_Renderer* renderer) {
     if (!gameOverSound) {
         std::cout << "Failed to load gameover.wav! Mix_Error: " << Mix_GetError() << std::endl;
     }
+
+    // Load restart button texture
+    surface = IMG_Load("restart_button.png");
+    if (!surface) {
+        std::cout << "Failed to load restart_button.png! IMG_Error: " << IMG_GetError() << std::endl;
+    }
+    restartButtonTexture = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_FreeSurface(surface);
+
+    // Load quit button texture
+    surface = IMG_Load("quit_button.png");
+    if (!surface) {
+        std::cout << "Failed to load quit_button.png! IMG_Error: " << IMG_GetError() << std::endl;
+    }
+    quitButtonTexture = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_FreeSurface(surface);
+
+    // Load start button texture
+    surface = IMG_Load("start_button.png");  // Đảm bảo bạn có file hình ảnh này
+    if (!surface) {
+        std::cout << "Failed to load start_button.png! IMG_Error: " << IMG_GetError() << std::endl;
+    }
+    startButtonTexture = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_FreeSurface(surface);
 }
 
 ResourceManager::~ResourceManager() {
@@ -108,8 +132,9 @@ ResourceManager::~ResourceManager() {
     SDL_DestroyTexture(runTexture1);
     SDL_DestroyTexture(runTexture2);
     SDL_DestroyTexture(jumpTexture);
-
-    // Giải phóng các âm thanh
+    SDL_DestroyTexture(restartButtonTexture);
+    SDL_DestroyTexture(quitButtonTexture);
+    SDL_DestroyTexture(startButtonTexture);  // Giải phóng texture của nút Start
     Mix_FreeChunk(jumpSound);
     Mix_FreeChunk(gameOverSound);
 }
