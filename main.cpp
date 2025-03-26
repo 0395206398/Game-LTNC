@@ -10,25 +10,23 @@
 #include "FlyingObstacle.h"
 #include "SpeedUpItem.h"
 #include "SlowDownItem.h"
+#include "InvincibilityItem.h" // Thêm header cho item bất tử
 #include "Utils.h"
 #include "ResourceManager.h"
 #include "Button.h"
 
 int main(int argc, char* argv[]) {
-    // Khởi tạo SDL với video và audio
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
         std::cout << "SDL could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
         return 1;
     }
 
-    // Khởi tạo SDL Mixer
     if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
         std::cout << "SDL_mixer could not initialize! Mix_Error: " << Mix_GetError() << std::endl;
         SDL_Quit();
         return 1;
     }
 
-    // Khởi tạo SDL_image
     if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
         std::cout << "SDL_image could not initialize! IMG_Error: " << IMG_GetError() << std::endl;
         Mix_CloseAudio();
@@ -36,13 +34,12 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    // Tạo window
     SDL_Window* window = SDL_CreateWindow("Vegito in the Prairie",
-                                        SDL_WINDOWPOS_UNDEFINED,
-                                        SDL_WINDOWPOS_UNDEFINED,
-                                        SCREEN_WIDTH,
-                                        SCREEN_HEIGHT,
-                                        SDL_WINDOW_SHOWN);
+                                          SDL_WINDOWPOS_UNDEFINED,
+                                          SDL_WINDOWPOS_UNDEFINED,
+                                          SCREEN_WIDTH,
+                                          SCREEN_HEIGHT,
+                                          SDL_WINDOW_SHOWN);
     if (!window) {
         std::cout << "Window could not be created! SDL_Error: " << SDL_GetError() << std::endl;
         IMG_Quit();
@@ -51,7 +48,6 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    // Tạo renderer
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     if (!renderer) {
         std::cout << "Renderer could not be created! SDL_Error: " << SDL_GetError() << std::endl;
@@ -62,22 +58,19 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    // Khởi tạo ResourceManager
     ResourceManager resources(renderer);
 
-    // Khởi tạo các đối tượng game
     Dino dino(resources.runTexture1, resources.runTexture2, resources.jumpTexture);
     std::vector<Obstacle> obstacles;
     std::vector<FlyingObstacle> flyingObstacles;
     std::vector<SpeedUpItem> speedUpItems;
     std::vector<SlowDownItem> slowDownItems;
+    std::vector<InvincibilityItem> invincibilityItems; // Thêm vector cho item bất tử
 
-    // Khởi tạo các nút
     Button restartButton(resources.restartButtonTexture, SCREEN_WIDTH / 2 - 300, SCREEN_HEIGHT / 2 - 80, 300, 400);
     Button quitButton(resources.quitButtonTexture, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 80, 300, 400);
     Button startButton(resources.startButtonTexture, SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 - 100, 300, 400);
 
-    // Các biến trạng thái game
     bool quit = false;
     GameState gameState = START;
     SDL_Event e;
@@ -88,13 +81,11 @@ int main(int argc, char* argv[]) {
     int score = 0;
     bool gameOverSoundPlayed = false;
 
-    // Các biến tốc độ
     float baseSpeed = 7.0f;
     float speedMultiplier = 1.0f;
     const float speedIncreaseRate = 0.001f;
     const float maxSpeedMultiplier = 2.0f;
 
-    // Game loop
     while (!quit) {
         while (SDL_PollEvent(&e) != 0) {
             if (e.type == SDL_QUIT) {
@@ -110,6 +101,7 @@ int main(int argc, char* argv[]) {
                     flyingObstacles.clear();
                     speedUpItems.clear();
                     slowDownItems.clear();
+                    invincibilityItems.clear(); // Reset item bất tử
                     obstacles.push_back(Obstacle(resources.obstacleTexture));
                     gameOverSoundPlayed = false;
                 } else if (gameState == PLAYING) {
@@ -120,7 +112,6 @@ int main(int argc, char* argv[]) {
                     gameOverSoundPlayed = false;
                 }
             }
-            // Xử lý sự kiện nhấn chuột
             if (e.type == SDL_MOUSEBUTTONDOWN) {
                 int mouseX = e.button.x;
                 int mouseY = e.button.y;
@@ -133,10 +124,10 @@ int main(int argc, char* argv[]) {
                     flyingObstacles.clear();
                     speedUpItems.clear();
                     slowDownItems.clear();
+                    invincibilityItems.clear(); // Reset item bất tử
                     obstacles.push_back(Obstacle(resources.obstacleTexture));
                     gameOverSoundPlayed = false;
-                }
-                else if (gameState == GAME_OVER) {
+                } else if (gameState == GAME_OVER) {
                     if (restartButton.isClicked(mouseX, mouseY)) {
                         gameState = PLAYING;
                         score = 0;
@@ -146,6 +137,7 @@ int main(int argc, char* argv[]) {
                         flyingObstacles.clear();
                         speedUpItems.clear();
                         slowDownItems.clear();
+                        invincibilityItems.clear(); // Reset item bất tử
                         obstacles.push_back(Obstacle(resources.obstacleTexture));
                         gameOverSoundPlayed = false;
                     }
@@ -157,19 +149,15 @@ int main(int argc, char* argv[]) {
         }
 
         if (gameState == PLAYING) {
-            // Tăng tốc độ dần theo thời gian
             speedMultiplier += speedIncreaseRate;
             if (speedMultiplier > maxSpeedMultiplier) {
                 speedMultiplier = maxSpeedMultiplier;
             }
 
-            // Cập nhật trạng thái nhân vật
             dino.update();
 
-            // Tính tốc độ tổng dựa trên speedMultiplier và hiệu ứng item
             float totalSpeedMultiplier = speedMultiplier * dino.speedMultiplier;
 
-            // Cập nhật các đối tượng
             for (auto& obstacle : obstacles) {
                 obstacle.speed = baseSpeed * totalSpeedMultiplier;
                 obstacle.update();
@@ -186,8 +174,11 @@ int main(int argc, char* argv[]) {
                 item.speed = baseSpeed * totalSpeedMultiplier;
                 item.update();
             }
+            for (auto& item : invincibilityItems) { // Cập nhật item bất tử
+                item.speed = baseSpeed * totalSpeedMultiplier;
+                item.update();
+            }
 
-            // Cộng điểm khi vượt qua chướng ngại vật
             for (auto& obstacle : obstacles) {
                 if (obstacle.x + OBSTACLE_WIDTH < dino.x && !obstacle.passed) {
                     score += 10;
@@ -201,7 +192,6 @@ int main(int argc, char* argv[]) {
                 }
             }
 
-            // Sinh chướng ngại vật
             Uint32 currentTime = SDL_GetTicks();
             if (currentTime - lastObstacleTime > obstacleInterval) {
                 if (obstacles.empty() || obstacles.back().x < SCREEN_WIDTH - 300) {
@@ -214,21 +204,28 @@ int main(int argc, char* argv[]) {
                 }
             }
 
-            // Sinh item
             if (currentTime - lastItemTime > itemInterval) {
                 if (score >= 600 && score < 1000) {
                     speedUpItems.push_back(SpeedUpItem(resources.speedUpItemTexture));
-                } else if (score >= 1000) {
+                } else if (score >= 1000 && score < 1500) {
                     if (rand() % 2 == 0) {
                         speedUpItems.push_back(SpeedUpItem(resources.speedUpItemTexture));
                     } else {
                         slowDownItems.push_back(SlowDownItem(resources.slowDownItemTexture));
                     }
+                } else if (score >= 1500) { // Sinh item bất tử khi điểm >= 1500
+                    int randChoice = rand() % 3;
+                    if (randChoice == 0) {
+                        speedUpItems.push_back(SpeedUpItem(resources.speedUpItemTexture));
+                    } else if (randChoice == 1) {
+                        slowDownItems.push_back(SlowDownItem(resources.slowDownItemTexture));
+                    } else {
+                        invincibilityItems.push_back(InvincibilityItem(resources.invincibilityItemTexture));
+                    }
                 }
                 lastItemTime = currentTime;
             }
 
-            // Xóa các đối tượng ra khỏi màn hình
             obstacles.erase(
                 std::remove_if(obstacles.begin(), obstacles.end(),
                     [](const Obstacle& o) { return o.isOffScreen(); }),
@@ -245,23 +242,25 @@ int main(int argc, char* argv[]) {
                 std::remove_if(slowDownItems.begin(), slowDownItems.end(),
                     [](const SlowDownItem& i) { return i.isOffScreen(); }),
                 slowDownItems.end());
+            invincibilityItems.erase( // Xóa item bất tử khi ra khỏi màn hình
+                std::remove_if(invincibilityItems.begin(), invincibilityItems.end(),
+                    [](const InvincibilityItem& i) { return i.isOffScreen(); }),
+                invincibilityItems.end());
 
-            // Kiểm tra va chạm
             SDL_Rect dinoCollisionRect = dino.getCollisionRect();
             for (const auto& obstacle : obstacles) {
                 SDL_Rect obstacleRect = obstacle.getRect();
-                if (SDL_HasIntersection(&dinoCollisionRect, &obstacleRect)) {
+                if (SDL_HasIntersection(&dinoCollisionRect, &obstacleRect) && !dino.checkInvincibility()) {
                     gameState = GAME_OVER;
                 }
             }
             for (const auto& flyingObstacle : flyingObstacles) {
                 SDL_Rect flyingRect = flyingObstacle.getRect();
-                if (SDL_HasIntersection(&dinoCollisionRect, &flyingRect)) {
+                if (SDL_HasIntersection(&dinoCollisionRect, &flyingRect) && !dino.checkInvincibility()) {
                     gameState = GAME_OVER;
                 }
             }
 
-            // Xử lý va chạm với item tăng tốc
             for (auto it = speedUpItems.begin(); it != speedUpItems.end();) {
                 SDL_Rect itemRect = it->getRect();
                 if (SDL_HasIntersection(&dinoCollisionRect, &itemRect)) {
@@ -272,7 +271,6 @@ int main(int argc, char* argv[]) {
                 }
             }
 
-            // Xử lý va chạm với item giảm tốc
             for (auto it = slowDownItems.begin(); it != slowDownItems.end();) {
                 SDL_Rect itemRect = it->getRect();
                 if (SDL_HasIntersection(&dinoCollisionRect, &itemRect)) {
@@ -282,9 +280,18 @@ int main(int argc, char* argv[]) {
                     ++it;
                 }
             }
+
+            for (auto it = invincibilityItems.begin(); it != invincibilityItems.end();) { // Xử lý va chạm item bất tử
+                SDL_Rect itemRect = it->getRect();
+                if (SDL_HasIntersection(&dinoCollisionRect, &itemRect)) {
+                    dino.applyInvincibility();
+                    it = invincibilityItems.erase(it);
+                } else {
+                    ++it;
+                }
+            }
         }
 
-        // Vẽ màn hình
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         SDL_RenderClear(renderer);
 
@@ -315,6 +322,10 @@ int main(int argc, char* argv[]) {
                 SDL_Rect itemRect = item.getRect();
                 SDL_RenderCopy(renderer, resources.slowDownItemTexture, NULL, &itemRect);
             }
+            for (const auto& item : invincibilityItems) { // Vẽ item bất tử
+                SDL_Rect itemRect = item.getRect();
+                SDL_RenderCopy(renderer, resources.invincibilityItemTexture, NULL, &itemRect);
+            }
 
             SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
             drawNumber(renderer, score, 10, 10, 20);
@@ -335,10 +346,9 @@ int main(int argc, char* argv[]) {
         }
 
         SDL_RenderPresent(renderer);
-        SDL_Delay(16); // Khoảng 60 FPS
+        SDL_Delay(16);
     }
 
-    // Giải phóng tài nguyên
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     Mix_CloseAudio();
