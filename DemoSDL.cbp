@@ -33,6 +33,8 @@
 			<Add option="-fexceptions" />
 		</Compiler>
 		<Unit filename="13.png" />
+		<Unit filename="Button.cpp" />
+		<Unit filename="Button.h" />
 		<Unit filename="Constants.h" />
 		<Unit filename="Dino.cpp" />
 		<Unit filename="Dino.h" />
@@ -55,6 +57,8 @@
 		<Unit filename="gamestart.png" />
 		<Unit filename="jump.wav" />
 		<Unit filename="main.cpp" />
+		<Unit filename="quit_button.png" />
+		<Unit filename="restart_button.png" />
 		<Unit filename="slowdown.png" />
 		<Unit filename="speedup.png" />
 		<Unit filename="vegitojump.png" />
