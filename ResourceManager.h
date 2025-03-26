@@ -15,12 +15,13 @@ public:
     SDL_Texture* flyingObstacleTexture;
     SDL_Texture* speedUpItemTexture;
     SDL_Texture* slowDownItemTexture;
+    SDL_Texture* invincibilityItemTexture; // ThÃªm texture cho item báº¥t tá»­
     SDL_Texture* runTexture1;
     SDL_Texture* runTexture2;
     SDL_Texture* jumpTexture;
     SDL_Texture* restartButtonTexture;
     SDL_Texture* quitButtonTexture;
-    SDL_Texture* startButtonTexture;  // Thêm texture cho nút Start
+    SDL_Texture* startButtonTexture;
     Mix_Chunk* jumpSound;
     Mix_Chunk* gameOverSound;
 
