@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1742956869 source:d:\game sdl2\demosdl\main.cpp
+1742980634 source:d:\game sdl2\demosdl\main.cpp
 	<SDL.h>
 	<SDL_image.h>
 	<SDL_mixer.h>
@@ -16,14 +16,14 @@
 	"ResourceManager.h"
 	"Button.h"
 
-1742868487 source:d:\game sdl2\demosdl\dino.cpp
+1742980615 source:d:\game sdl2\demosdl\dino.cpp
 	"Dino.h"
 	"Constants.h"
 
-1742868458 d:\game sdl2\demosdl\dino.h
+1742980603 d:\game sdl2\demosdl\dino.h
 	<SDL.h>
 
-1742868414 d:\game sdl2\demosdl\constants.h
+1742980548 d:\game sdl2\demosdl\constants.h
 
 1742868606 source:d:\game sdl2\demosdl\flyingobstacle.cpp
 	"FlyingObstacle.h"
@@ -44,7 +44,7 @@
 1742868741 d:\game sdl2\demosdl\utils.h
 	<SDL.h>
 
-1742956381 d:\game sdl2\demosdl\resourcemanager.h
+1742980584 d:\game sdl2\demosdl\resourcemanager.h
 	<SDL.h>
 	<SDL_image.h>
 	<SDL_mixer.h>
@@ -54,7 +54,7 @@
 	"Obstacle.h"
 	"Constants.h"
 
-1742977815 source:d:\game sdl2\demosdl\resourcemanager.cpp
+1742980573 source:d:\game sdl2\demosdl\resourcemanager.cpp
 	"ResourceManager.h"
 
 1742868713 source:d:\game sdl2\demosdl\slowdownitem.cpp
@@ -74,4 +74,95 @@
 
 1742953243 d:\game sdl2\demosdl\button.h
 	<SDL.h>
+
+1742979125 source:d:\game sdl2\demosdl\invincibilityitem.cpp
+	"InvincibilityItem.h"
+	"Constants.h"
+
+1742979083 d:\game sdl2\demosdl\invincibilityitem.h
+	<SDL.h>
+
+1742954174 source:d:\game sdl2\gameltnc\button.cpp
+	"Button.h"
+
+1742953243 d:\game sdl2\gameltnc\button.h
+	<SDL.h>
+
+1742868606 source:d:\game sdl2\gameltnc\flyingobstacle.cpp
+	"FlyingObstacle.h"
+	"Constants.h"
+
+1742868574 d:\game sdl2\gameltnc\flyingobstacle.h
+	<SDL.h>
+
+1742996924 d:\game sdl2\gameltnc\constants.h
+
+1742868549 source:d:\game sdl2\gameltnc\obstacle.cpp
+	"Obstacle.h"
+	"Constants.h"
+
+1742868514 d:\game sdl2\gameltnc\obstacle.h
+	<SDL.h>
+
+1742868713 source:d:\game sdl2\gameltnc\slowdownitem.cpp
+	"SlowDownItem.h"
+	"Constants.h"
+
+1742868685 d:\game sdl2\gameltnc\slowdownitem.h
+	<SDL.h>
+
+1742868659 source:d:\game sdl2\gameltnc\speedupitem.cpp
+	"SpeedUpItem.h"
+	"Constants.h"
+
+1742868637 d:\game sdl2\gameltnc\speedupitem.h
+	<SDL.h>
+
+1742868773 source:d:\game sdl2\gameltnc\utils.cpp
+	"Utils.h"
+	<string>
+
+1742868741 d:\game sdl2\gameltnc\utils.h
+	<SDL.h>
+
+1742996714 source:d:\game sdl2\gameltnc\dino.cpp
+	"Dino.h"
+	"Constants.h"
+
+1742996715 d:\game sdl2\gameltnc\dino.h
+	<SDL.h>
+
+1742996714 source:d:\game sdl2\gameltnc\main.cpp
+	<SDL.h>
+	<SDL_image.h>
+	<SDL_mixer.h>
+	<iostream>
+	<vector>
+	<algorithm>
+	"Constants.h"
+	"Dino.h"
+	"Obstacle.h"
+	"FlyingObstacle.h"
+	"SpeedUpItem.h"
+	"SlowDownItem.h"
+	"InvincibilityItem.h"
+	"Utils.h"
+	"ResourceManager.h"
+	"Button.h"
+
+1742979083 d:\game sdl2\gameltnc\invincibilityitem.h
+	<SDL.h>
+
+1742996714 d:\game sdl2\gameltnc\resourcemanager.h
+	<SDL.h>
+	<SDL_image.h>
+	<SDL_mixer.h>
+	<iostream>
+
+1742996715 source:d:\game sdl2\gameltnc\resourcemanager.cpp
+	"ResourceManager.h"
+
+1742996506 source:d:\game sdl2\gameltnc\invincibilityitem.cpp
+	"InvincibilityItem.h"
+	"Constants.h"
 
