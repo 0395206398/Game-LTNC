@@ -40,6 +40,8 @@
 		<Unit filename="Dino.h" />
 		<Unit filename="FlyingObstacle.cpp" />
 		<Unit filename="FlyingObstacle.h" />
+		<Unit filename="InvincibilityItem.cpp" />
+		<Unit filename="InvincibilityItem.h" />
 		<Unit filename="Obstacle.cpp" />
 		<Unit filename="Obstacle.h" />
 		<Unit filename="ResourceManager.cpp" />
@@ -55,6 +57,7 @@
 		<Unit filename="gameover.jpg" />
 		<Unit filename="gameover.wav" />
 		<Unit filename="gamestart.png" />
+		<Unit filename="invincibility.png" />
 		<Unit filename="jump.wav" />
 		<Unit filename="main.cpp" />
 		<Unit filename="quit_button.png" />
