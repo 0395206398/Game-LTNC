@@ -17,6 +17,8 @@ public:
     const Uint32 frameDelay = 200;
     float speedMultiplier;
     Uint32 speedEffectEndTime;
+    bool isInvincible;          // Thêm biến bất tử
+    Uint32 invincibilityEndTime;// Thêm thời gian hết bất tử
 
     Dino(SDL_Texture* tex1, SDL_Texture* tex2, SDL_Texture* jumpTex);
     Dino(const Dino&) = delete;
@@ -25,6 +27,8 @@ public:
     void reset(SDL_Texture* tex1, SDL_Texture* tex2, SDL_Texture* jumpTex);
     void jump();
     void applySpeedEffect(float multiplier);
+    void applyInvincibility();  // Thêm phương thức kích hoạt bất tử
+    bool checkInvincibility() const; // Kiểm tra trạng thái bất tử
     void update();
     SDL_Rect getRect();
     SDL_Rect getCollisionRect() const;
