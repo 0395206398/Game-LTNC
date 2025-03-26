@@ -61,6 +61,7 @@
 		<Unit filename="restart_button.png" />
 		<Unit filename="slowdown.png" />
 		<Unit filename="speedup.png" />
+		<Unit filename="start_button.png" />
 		<Unit filename="vegitojump.png" />
 		<Unit filename="vegitorun1.png" />
 		<Unit filename="vegitorun2.png" />
