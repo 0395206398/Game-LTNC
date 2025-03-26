@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1742956573 source:d:\game sdl2\demosdl\main.cpp
+1742956869 source:d:\game sdl2\demosdl\main.cpp
 	<SDL.h>
 	<SDL_image.h>
 	<SDL_mixer.h>
