@@ -12,6 +12,7 @@
 #include "SlowDownItem.h"
 #include "Utils.h"
 #include "ResourceManager.h"
+#include "Button.h"
 
 int main(int argc, char* argv[]) {
     // Khởi tạo SDL với video và audio
@@ -71,6 +72,11 @@ int main(int argc, char* argv[]) {
     std::vector<SpeedUpItem> speedUpItems;
     std::vector<SlowDownItem> slowDownItems;
 
+    // Khởi tạo các nút
+    Button restartButton(resources.restartButtonTexture, SCREEN_WIDTH / 2 - 300, SCREEN_HEIGHT / 2 - 80, 300, 400);
+    Button quitButton(resources.quitButtonTexture, SCREEN_WIDTH / 2 , SCREEN_HEIGHT / 2 - 80 , 300, 400);
+    Button startButton(resources.startButtonTexture, SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2-100, 300, 400);  // Thêm nút Start
+
     // Các biến trạng thái game
     bool quit = false;
     GameState gameState = START;
@@ -112,6 +118,32 @@ int main(int argc, char* argv[]) {
                 } else if (gameState == GAME_OVER) {
                     gameState = START;
                     gameOverSoundPlayed = false;
+                }
+            }
+            // Xử lý sự kiện nhấn chuột
+            if (e.type == SDL_MOUSEBUTTONDOWN) {
+                int mouseX = e.button.x;
+                int mouseY = e.button.y;
+                if (gameState == START && startButton.isClicked(mouseX, mouseY)) {
+                    gameState = PLAYING;
+                    score = 0;
+                    speedMultiplier = 1.0f;
+                    dino.reset(resources.runTexture1, resources.runTexture2, resources.jumpTexture);
+                    obstacles.clear();
+                    flyingObstacles.clear();
+                    speedUpItems.clear();
+                    slowDownItems.clear();
+                    obstacles.push_back(Obstacle(resources.obstacleTexture));
+                    gameOverSoundPlayed = false;
+                }
+                else if (gameState == GAME_OVER) {
+                    if (restartButton.isClicked(mouseX, mouseY)) {
+                        gameState = START;
+                        gameOverSoundPlayed = false;
+                    }
+                    if (quitButton.isClicked(mouseX, mouseY)) {
+                        quit = true;
+                    }
                 }
             }
         }
@@ -254,6 +286,7 @@ int main(int argc, char* argv[]) {
         if (gameState == START) {
             SDL_Rect gameStartRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
             SDL_RenderCopy(renderer, resources.gameStartTexture, NULL, &gameStartRect);
+            startButton.render(renderer);  // Vẽ nút Start
         } else if (gameState == PLAYING) {
             SDL_Rect dinoRect = dino.getRect();
             SDL_RenderCopy(renderer, dino.getCurrentTexture(), NULL, &dinoRect);
@@ -282,7 +315,10 @@ int main(int argc, char* argv[]) {
             SDL_RenderCopy(renderer, resources.gameOverTexture, NULL, &gameOverRect);
 
             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-            drawNumber(renderer, score, SCREEN_WIDTH/2 - 20, SCREEN_HEIGHT/2 - 10, 20);
+            drawNumber(renderer, score, SCREEN_WIDTH / 2 - 20, SCREEN_HEIGHT / 2 - 10, 20);
+
+            restartButton.render(renderer);
+            quitButton.render(renderer);
 
             if (!gameOverSoundPlayed) {
                 Mix_PlayChannel(-1, resources.gameOverSound, 0);
