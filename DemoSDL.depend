@@ -1,10 +1,77 @@
 # depslib dependency file v1.0
-1742867938 source:d:\game sdl2\demosdl\main.cpp
+1742955134 source:d:\game sdl2\demosdl\main.cpp
 	<SDL.h>
 	<SDL_image.h>
 	<SDL_mixer.h>
 	<iostream>
-	<string>
 	<vector>
 	<algorithm>
+	"Constants.h"
+	"Dino.h"
+	"Obstacle.h"
+	"FlyingObstacle.h"
+	"SpeedUpItem.h"
+	"SlowDownItem.h"
+	"Utils.h"
+	"ResourceManager.h"
+	"Button.h"
+
+1742868487 source:d:\game sdl2\demosdl\dino.cpp
+	"Dino.h"
+	"Constants.h"
+
+1742868458 d:\game sdl2\demosdl\dino.h
+	<SDL.h>
+
+1742868414 d:\game sdl2\demosdl\constants.h
+
+1742868606 source:d:\game sdl2\demosdl\flyingobstacle.cpp
+	"FlyingObstacle.h"
+	"Constants.h"
+
+1742868574 d:\game sdl2\demosdl\flyingobstacle.h
+	<SDL.h>
+
+1742868514 d:\game sdl2\demosdl\obstacle.h
+	<SDL.h>
+
+1742868637 d:\game sdl2\demosdl\speedupitem.h
+	<SDL.h>
+
+1742868685 d:\game sdl2\demosdl\slowdownitem.h
+	<SDL.h>
+
+1742868741 d:\game sdl2\demosdl\utils.h
+	<SDL.h>
+
+1742954073 d:\game sdl2\demosdl\resourcemanager.h
+	<SDL.h>
+	<SDL_image.h>
+	<SDL_mixer.h>
+	<iostream>
+
+1742868549 source:d:\game sdl2\demosdl\obstacle.cpp
+	"Obstacle.h"
+	"Constants.h"
+
+1742954091 source:d:\game sdl2\demosdl\resourcemanager.cpp
+	"ResourceManager.h"
+
+1742868713 source:d:\game sdl2\demosdl\slowdownitem.cpp
+	"SlowDownItem.h"
+	"Constants.h"
+
+1742868659 source:d:\game sdl2\demosdl\speedupitem.cpp
+	"SpeedUpItem.h"
+	"Constants.h"
+
+1742868773 source:d:\game sdl2\demosdl\utils.cpp
+	"Utils.h"
+	<string>
+
+1742954174 source:d:\game sdl2\demosdl\button.cpp
+	"Button.h"
+
+1742953243 d:\game sdl2\demosdl\button.h
+	<SDL.h>
 
