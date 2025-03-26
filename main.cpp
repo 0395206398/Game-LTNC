@@ -74,8 +74,8 @@ int main(int argc, char* argv[]) {
 
     // Khởi tạo các nút
     Button restartButton(resources.restartButtonTexture, SCREEN_WIDTH / 2 - 300, SCREEN_HEIGHT / 2 - 80, 300, 400);
-    Button quitButton(resources.quitButtonTexture, SCREEN_WIDTH / 2 , SCREEN_HEIGHT / 2 - 80 , 300, 400);
-    Button startButton(resources.startButtonTexture, SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2-100, 300, 400);  // Thêm nút Start
+    Button quitButton(resources.quitButtonTexture, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 80, 300, 400);
+    Button startButton(resources.startButtonTexture, SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 - 100, 300, 400);
 
     // Các biến trạng thái game
     bool quit = false;
@@ -114,7 +114,7 @@ int main(int argc, char* argv[]) {
                     gameOverSoundPlayed = false;
                 } else if (gameState == PLAYING) {
                     dino.jump();
-                    Mix_PlayChannel(-1, resources.jumpSound, 0);  // Phát âm thanh nhảy
+                    Mix_PlayChannel(-1, resources.jumpSound, 0);
                 } else if (gameState == GAME_OVER) {
                     gameState = START;
                     gameOverSoundPlayed = false;
@@ -138,7 +138,15 @@ int main(int argc, char* argv[]) {
                 }
                 else if (gameState == GAME_OVER) {
                     if (restartButton.isClicked(mouseX, mouseY)) {
-                        gameState = START;
+                        gameState = PLAYING;
+                        score = 0;
+                        speedMultiplier = 1.0f;
+                        dino.reset(resources.runTexture1, resources.runTexture2, resources.jumpTexture);
+                        obstacles.clear();
+                        flyingObstacles.clear();
+                        speedUpItems.clear();
+                        slowDownItems.clear();
+                        obstacles.push_back(Obstacle(resources.obstacleTexture));
                         gameOverSoundPlayed = false;
                     }
                     if (quitButton.isClicked(mouseX, mouseY)) {
@@ -286,7 +294,7 @@ int main(int argc, char* argv[]) {
         if (gameState == START) {
             SDL_Rect gameStartRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
             SDL_RenderCopy(renderer, resources.gameStartTexture, NULL, &gameStartRect);
-            startButton.render(renderer);  // Vẽ nút Start
+            startButton.render(renderer);
         } else if (gameState == PLAYING) {
             SDL_Rect dinoRect = dino.getRect();
             SDL_RenderCopy(renderer, dino.getCurrentTexture(), NULL, &dinoRect);
