@@ -23,3 +23,6 @@ Dự án trò chơi này là một phần của môn học "Lập trình nâng c
 - [Youtube game SDL adventure](https://www.youtube.com/watch?v=1KD4Ae0tX0g&list=PL-K0viiuJ2RctP5nlJlqmHGeh66-GOZR_) 
 - [SDL2 Wiki](https://wiki.libsdl.org/SDL2/Tutorials)
 - [Lazy Foo' Productions](https://lazyfoo.net/tutorials/SDL/index.php)
+- [Hình ảnh nút bấm](https://lovepik.com/download/detail/401409074?byso=&type=3)
+- [Âm thanh khi kết thúc trò chơi](https://freesound.org/people/deleted_user_877451/sounds/76376/)
+- [Âm thanh khi nhân vật nhảy](https://freesound.org/people/cabled_mess/sounds/350901/)
