@@ -10,7 +10,7 @@
 #include "FlyingObstacle.h"
 #include "SpeedUpItem.h"
 #include "SlowDownItem.h"
-#include "InvincibilityItem.h" // Thêm header cho item bất tử
+#include "InvincibilityItem.h"
 #include "Utils.h"
 #include "ResourceManager.h"
 #include "Button.h"
@@ -205,15 +205,17 @@ int main(int argc, char* argv[]) {
             }
 
             if (currentTime - lastItemTime > itemInterval) {
-                if (score >= 600 && score < 1000) {
+                if (score >= 100) {
                     speedUpItems.push_back(SpeedUpItem(resources.speedUpItemTexture));
-                } else if (score >= 1000 && score < 1500) {
+                }
+            if (score >= 250) {
                     if (rand() % 2 == 0) {
                         speedUpItems.push_back(SpeedUpItem(resources.speedUpItemTexture));
                     } else {
                         slowDownItems.push_back(SlowDownItem(resources.slowDownItemTexture));
                     }
-                } else if (score >= 1500) { // Sinh item bất tử khi điểm >= 1500
+                }
+            if (score >= 400) {
                     int randChoice = rand() % 3;
                     if (randChoice == 0) {
                         speedUpItems.push_back(SpeedUpItem(resources.speedUpItemTexture));
