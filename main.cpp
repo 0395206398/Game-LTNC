@@ -276,7 +276,7 @@ int main(int argc, char* argv[]) {
             for (auto it = slowDownItems.begin(); it != slowDownItems.end();) {
                 SDL_Rect itemRect = it->getRect();
                 if (SDL_HasIntersection(&dinoCollisionRect, &itemRect)) {
-                    dino.applySpeedEffect(0.5f);
+                    dino.applySpeedEffect(0.75f);
                     it = slowDownItems.erase(it);
                 } else {
                     ++it;
