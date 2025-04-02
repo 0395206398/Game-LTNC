@@ -4,7 +4,7 @@
 FlyingObstacle::FlyingObstacle(SDL_Texture* tex) {
     x = SCREEN_WIDTH;
     y = SCREEN_HEIGHT / 1.4;
-    speed = 7.0f;
+    speed = 6.0f;
     passed = false;
     texture = tex;
 }
