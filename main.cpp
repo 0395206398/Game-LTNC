@@ -82,9 +82,9 @@ int main(int argc, char* argv[]) {
     bool gameOverSoundPlayed = false;
 
     float baseSpeed = 6.0f;
-    float speedMultiplier = 1.05f;
+    float speedMultiplier = 1.0f;
     const float speedIncreaseRate = 0.001f;
-    const float maxSpeedMultiplier = 2.0f;
+    const float maxSpeedMultiplier = 2.5f;
 
     while (!quit) {
         while (SDL_PollEvent(&e) != 0) {
@@ -276,7 +276,7 @@ int main(int argc, char* argv[]) {
             for (auto it = slowDownItems.begin(); it != slowDownItems.end();) {
                 SDL_Rect itemRect = it->getRect();
                 if (SDL_HasIntersection(&dinoCollisionRect, &itemRect)) {
-                    dino.applySpeedEffect(0.75f);
+                    dino.applySpeedEffect(0.9f);
                     it = slowDownItems.erase(it);
                 } else {
                     ++it;
