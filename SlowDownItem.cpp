@@ -4,7 +4,7 @@
 SlowDownItem::SlowDownItem(SDL_Texture* tex) {
     x = SCREEN_WIDTH;
     y = SCREEN_HEIGHT - ITEM_HEIGHT - 20;
-    speed = 7.0f;
+    speed = 6.0f;
     texture = tex;
 }
 
