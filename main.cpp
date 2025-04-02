@@ -81,8 +81,8 @@ int main(int argc, char* argv[]) {
     int score = 0;
     bool gameOverSoundPlayed = false;
 
-    float baseSpeed = 7.0f;
-    float speedMultiplier = 1.0f;
+    float baseSpeed = 6.0f;
+    float speedMultiplier = 1.05f;
     const float speedIncreaseRate = 0.001f;
     const float maxSpeedMultiplier = 2.0f;
 
