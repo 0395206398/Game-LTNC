@@ -4,7 +4,7 @@
 Obstacle::Obstacle(SDL_Texture* tex) {
     x = SCREEN_WIDTH;
     y = SCREEN_HEIGHT - OBSTACLE_HEIGHT;
-    speed = 7.0f;
+    speed = 6.0f;
     passed = false;
     texture = tex;
 }
