@@ -1,5 +1,5 @@
 <p align="center"> 
- <h1 align="center">Ninja Adventure - 24020080 Nguyễn Ngọc Đức</h1>
+ <h1 align="center"> Vegito in the Prairie - 24020080 Nguyễn Ngọc Đức</h1>
 </p>
 Dự án trò chơi này là một phần của môn học "Lập trình nâng cao" tại Trường Đại học Công nghệ - Đại học Quốc gia Hà Nội.
 
