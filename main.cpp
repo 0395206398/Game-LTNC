@@ -92,24 +92,9 @@ int main(int argc, char* argv[]) {
                 quit = true;
             }
             if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_SPACE) {
-                if (gameState == START) {
-                    gameState = PLAYING;
-                    score = 0;
-                    speedMultiplier = 1.0f;
-                    dino.reset(resources.runTexture1, resources.runTexture2, resources.jumpTexture);
-                    obstacles.clear();
-                    flyingObstacles.clear();
-                    speedUpItems.clear();
-                    slowDownItems.clear();
-                    invincibilityItems.clear(); // Reset item bất tử
-                    obstacles.push_back(Obstacle(resources.obstacleTexture));
-                    gameOverSoundPlayed = false;
-                } else if (gameState == PLAYING) {
+                 if (gameState == PLAYING) {
                     dino.jump();
                     Mix_PlayChannel(-1, resources.jumpSound, 0);
-                } else if (gameState == GAME_OVER) {
-                    gameState = START;
-                    gameOverSoundPlayed = false;
                 }
             }
             if (e.type == SDL_MOUSEBUTTONDOWN) {
